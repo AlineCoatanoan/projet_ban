@@ -1,0 +1,109 @@
+
+-- Transformation des données brutes
+
+-- on insert les données dans les tables depuis data_ban (table qui contient les données du CSV)
+
+INSERT INTO commune (
+    code_insee,
+    nom_commune,
+    code_postal,
+    libelle_acheminement,
+    certification_commune,
+    code_insee_ancienne_commune,
+    nom_ancienne_commune
+)
+SELECT DISTINCT
+    code_insee,
+    nom_commune,
+    code_postal,
+    libelle_acheminement,
+    certification_commune,
+    code_insee_ancienne_commune,
+    nom_ancienne_commune
+FROM data_ban
+WHERE code_insee IS NOT NULL
+ON CONFLICT (code_insee) DO NOTHING;
+
+INSERT INTO voie (
+    id_fantoir,
+    nom_voie,
+    nom_afnor,
+    alias,
+    source_nom_voie,
+    type_position,
+    nom_ld,
+    code_insee
+)
+SELECT DISTINCT
+    id_fantoir,
+    nom_voie,
+    nom_afnor,
+    alias,
+    source_nom_voie,
+    type_position,
+    nom_ld,
+    code_insee
+FROM data_ban
+WHERE id_fantoir IS NOT NULL
+ON CONFLICT (id_fantoir) DO NOTHING;
+
+INSERT INTO adresse (
+    numero,
+    rep,
+    id_fantoir,
+    source_position
+)
+SELECT
+    numero,
+    rep,
+    id_fantoir,
+    source_position
+FROM data_ban
+WHERE id_fantoir IS NOT NULL
+ON CONFLICT DO NOTHING;
+
+INSERT INTO coordonnee (
+    id_adresse,
+    lon,
+    lat,
+    x,
+    y
+)
+SELECT
+    a.id,
+    d.lon,
+    d.lat,
+    d.x,
+    d.y
+FROM adresse a
+JOIN data_ban d
+    ON a.id_fantoir = d.id_fantoir
+   AND a.numero = d.numero
+   AND COALESCE(a.rep,'') = COALESCE(d.rep,'')
+ON CONFLICT (id_adresse) DO NOTHING;
+
+-- ici on a besoin de l'id de l'adresse pour récupérer les coordonnées
+-- étant donnée que les adresses ont déjà été insérées, on joint la table data_ban 
+-- pour chercher dans les données brutes la ligne qui correspond.
+-- ON : On doit matcher le même id_fantoir, le même numéro et la même répétition.
+-- "rep" est optionnelle donc ça peut être rempli, null ou vide. On utilise COALESCE pour traiter les 3 cas.
+
+
+INSERT INTO parcelles (id_parcelle)
+SELECT DISTINCT cad_parcelles AS id_parcelle
+FROM data_ban
+WHERE cad_parcelles IS NOT NULL AND cad_parcelles != '' -- on filtre pour que cad_parcelles ne soit pas null et pas vide
+ON CONFLICT (id_parcelle) DO NOTHING;
+
+INSERT INTO adresse_parcelle (id_adresse, id_parcelle)
+SELECT
+    a.id,
+    TRIM(p) AS id_parcelle
+FROM adresse a
+JOIN data_ban d
+    ON a.id_fantoir = d.id_fantoir
+   AND a.numero = d.numero
+   AND COALESCE(a.rep,'') = COALESCE(d.rep,'')
+JOIN LATERAL UNNEST(STRING_TO_ARRAY(d.cad_parcelles, ',')) AS p(id_parcelle) ON TRUE
+WHERE d.cad_parcelles IS NOT NULL AND d.cad_parcelles != ''
+ON CONFLICT (id_adresse, id_parcelle) DO NOTHING;
