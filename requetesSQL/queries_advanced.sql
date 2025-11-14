@@ -80,3 +80,23 @@ VALUES (1, 4.123456, 100, 654321, 123456);
 
 
 -- Ajouter automatiquement une date de création / mise à jour à chaque modification via trigger.
+ALTER TABLE adresse
+ADD COLUMN date_creation TIMESTAMP DEFAULT now(),
+ADD COLUMN date_modification TIMESTAMP DEFAULT now();
+
+-- j'ai ajouté des colonnes dans la table adresse pour gérer les dates (rajouté au MCD/MLD/MPD)
+
+CREATE OR REPLACE FUNCTION maj_date_modification()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.date_modification := now();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trig_date_modification
+BEFORE UPDATE ON adresse
+FOR EACH ROW
+EXECUTE FUNCTION maj_date_modification();
+
+
