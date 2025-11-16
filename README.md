@@ -52,7 +52,7 @@ de date via trigger.
 ###### 📌 Exemples de requêtes :
 
 
-Lister toutes les adresses d’une commune donnée, triées par voie :
+📝 Lister toutes les adresses d’une commune donnée, triées par voie :
 
 SELECT a.numero,
        a.rep,
@@ -66,7 +66,7 @@ WHERE c.nom_commune ILIKE 'brignon'
 ORDER BY v.nom_voie, a.numero;
 
 
-Ajouter une nouvelle adresse complète :
+📝 Ajouter une nouvelle adresse complète :
 
 INSERT INTO commune (code_insee, nom_commune, code_postal, libelle_acheminement)
 VALUES ('39999', 'Kaamelott', '39999', 'Kaamelott')
@@ -84,7 +84,7 @@ INSERT INTO coordonnee (id_adresse, lon, lat, x, y)
 VALUES (currval('adresse_id_seq'), 4.350, 43.850, 654321, 123456);
 
 
-Lister les codes postaux avec plus de 10 000 adresses :
+📝 Lister les codes postaux avec plus de 10 000 adresses :
 
 SELECT c.code_postal,
        c.nom_commune,
