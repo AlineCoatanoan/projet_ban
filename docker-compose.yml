@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: ban_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ton_mdp_perso
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      - ban_network
+
+networks:
+  ban_network:
+    driver: bridge
