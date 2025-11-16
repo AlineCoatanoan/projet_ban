@@ -47,18 +47,73 @@ ADRESSE — entité pivot qui référence numéro, rép (complément), et relie 
 COORDONNÉES — table dédiée aux coordonnées (lon, lat, x, y) liées en 1:1 à une adresse.
 PARCELLES + ADRESSE_PARCELLE — table parcelles et table d'association pour gérer la relation n:n.
 
-
+Par la suite, j'ai dû rajouter les colonnes date_creation et date_modification dans la table adresse pour faire des ajouts/modif
+de date via trigger.
 
 
 ###### 📌 Exemples de requêtes :
 
-Pour les requêtes, j'ai fais du pseudo-code à chaque fois pour bien comprendre comment elles étaient traitées. 
+📌 Exemples de requêtes
+
+Lister toutes les adresses d’une commune donnée, triées par voie :
+
+SELECT a.numero,
+       a.rep,
+       v.nom_voie,
+       c.nom_commune,
+       c.code_postal
+FROM adresse a
+JOIN voie v ON a.id_fantoir = v.id_fantoir
+JOIN commune c ON v.code_insee = c.code_insee
+WHERE c.nom_commune ILIKE 'brignon'
+ORDER BY v.nom_voie, a.numero;
 
 
+Ajouter une nouvelle adresse complète :
+
+INSERT INTO commune (code_insee, nom_commune, code_postal, libelle_acheminement)
+VALUES ('39999', 'Kaamelott', '39999', 'Kaamelott')
+ON CONFLICT (code_insee) DO NOTHING;
+
+INSERT INTO voie (id_fantoir, nom_voie, code_insee)
+VALUES ('N0001', 'Rue Perceval', '39999')
+ON CONFLICT (id_fantoir) DO NOTHING;
+
+INSERT INTO adresse (numero, rep, id_fantoir, source_position)
+VALUES ('10', NULL, 'N0001', 'BAN')
+RETURNING id;
+
+INSERT INTO coordonnee (id_adresse, lon, lat, x, y)
+VALUES (currval('adresse_id_seq'), 4.350, 43.850, 654321, 123456);
 
 
+Lister les codes postaux avec plus de 10 000 adresses :
 
+SELECT c.code_postal,
+       c.nom_commune,
+       COUNT(*) AS nb_adresses
+FROM adresse a
+JOIN voie v ON a.id_fantoir = v.id_fantoir
+JOIN commune c ON v.code_insee = c.code_insee
+GROUP BY c.code_postal, c.nom_commune
+HAVING COUNT(*) > 10000
+ORDER BY nb_adresses DESC;
 
 
 ###### 📌 Observations de performance :
 
+Avant la création des index, certaines requêtes sur les tables commune, voie et adresse nécessitaient un scan complet de la table, ce qui était plus lent.
+
+Après création des index sur les champs les plus sollicités :
+
+commune(code_postal)
+adresse(id_fantoir)
+voie(code_insee)
+
+PostgreSQL peut accéder directement aux lignes pertinentes sans parcourir toute la table.
+
+Exemple concret :
+
+Requête pour lister toutes les adresses d’un code postal : Execution Time passé de 0,087 ms → 0,062 ms.
+
+Les index permettent un gain de rapidité significatif sur les requêtes fréquentes, en particulier lorsqu’on travaille avec des tables volumineuses comme celles issues de la BAN.
