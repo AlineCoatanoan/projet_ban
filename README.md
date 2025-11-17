@@ -94,7 +94,7 @@ J’ai choisi de découper la table en plusieurs entités pour mieux structurer 
 - id_adresse
 - id_parcelle
 
-Ensuite, faire une requête de creation des tables [SCRIPT création de tables](projet_ban/create_table.sql) et insertion des données (INSERT INTO)
+Ensuite, faire une requête de creation des tables [SCRIPT création de tables](/create_table.sql) et insertion des données (INSERT INTO)
 
 ### 📌 Exemples de requêtes :
 ---
