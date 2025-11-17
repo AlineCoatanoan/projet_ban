@@ -45,7 +45,7 @@
 - **RG26 :** La suppression d’une adresse ou d’une parcelle doit entraîner la suppression correspondante dans la table de liaison.  
 
 ---
-## Règles générales de cohérence (BAN)
+## Règles générales 
 - **RG27 :** Chaque identifiant d’adresse (id) doit rester stable si le lieu existe toujours.  
 - **RG28 :** Chaque nouvelle adresse doit recevoir un nouvel identifiant unique.  
 - **RG29 :** Chaque identifiant d’un objet détruit ne doit pas être réutilisé pour un autre objet.  

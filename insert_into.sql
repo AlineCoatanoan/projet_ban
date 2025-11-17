@@ -1,7 +1,8 @@
 
 -- Transformation des données brutes
+-- insertion des données dans les tables depuis data_ban (table qui contient les données du CSV)
 
--- on insert les données dans les tables depuis data_ban (table qui contient les données du CSV)
+BEGIN;
 
 INSERT INTO commune (
     code_insee,
@@ -88,11 +89,11 @@ ON CONFLICT (id_adresse) DO NOTHING;
 -- ON : On doit matcher le même id_fantoir, le même numéro et la même répétition.
 -- "rep" est optionnelle donc ça peut être rempli, null ou vide. On utilise COALESCE pour traiter les 3 cas.
 
-
 INSERT INTO parcelles (id_parcelle)
-SELECT DISTINCT cad_parcelles AS id_parcelle
-FROM data_ban
-WHERE cad_parcelles IS NOT NULL AND cad_parcelles != '' -- on filtre pour que cad_parcelles ne soit pas null et pas vide
+SELECT DISTINCT TRIM(p) AS id_parcelle
+FROM data_ban,
+     UNNEST(STRING_TO_ARRAY(cad_parcelles, ',')) AS p
+WHERE cad_parcelles IS NOT NULL AND cad_parcelles <> '' -- on filtre pour que cad_parcelles ne soit pas null et pas vide
 ON CONFLICT (id_parcelle) DO NOTHING;
 
 INSERT INTO adresse_parcelle (id_adresse, id_parcelle)
@@ -105,5 +106,7 @@ JOIN data_ban d
    AND a.numero = d.numero
    AND COALESCE(a.rep,'') = COALESCE(d.rep,'')
 JOIN LATERAL UNNEST(STRING_TO_ARRAY(d.cad_parcelles, ',')) AS p(id_parcelle) ON TRUE
-WHERE d.cad_parcelles IS NOT NULL AND d.cad_parcelles != ''
+WHERE d.cad_parcelles IS NOT NULL AND d.cad_parcelles <> ''
 ON CONFLICT (id_adresse, id_parcelle) DO NOTHING;
+
+COMMIT;

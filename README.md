@@ -9,16 +9,29 @@ Optimisation et modélisation de données réelles
 
 
 
-### 📌 Installation / Prérequis :
+### 📌 Etapes d'installation :
 ---
-PostgreSQL installé (version 17)
+## Installation
+PostgreSQL (version 17)
+DBeaver pour accéder à la base de données
+Docker 
+Fichier CSV départemental contenant les adresses (ex. adresses-30.csv)
 
-DBeaver pour accéder à la base
+## Création de la base PostgreSQL
+Ouvrir DBeaver et se connecter à Postgres. Cocher la case permettant d'accéder à toutes les BDD si la BDD BAN a été créée via le terminal. Sinon, dans l’arborescence à gauche, clic droit sur Databases -> Create New Database.
+Choisir le propriétaire (utilisateur PostgreSQL).
+Clique sur Finish.
 
-Fichier CSV départemental (adresses-30.csv)
+## Créer un utilisateur / mot de passe
+Dans l’arborescence -> Security -> Users
+Clic droit -> Create New User
+Nom, mot de passe, droits (par ex. Can create objects pour créer des tables).
+Vérifier que l’utilisateur a les privilèges sur la bdd : clic droit sur la base -> Edit Privileges -> ajoute l’utilisateur.
 
-Docker
-
+## Importer les CSV
+On peut d'abord CREATE TABLE (data_ban) en ouvrant un nouveau script (clique droit sur la BDD -> editeur sql)
+ensuite, clique droit que la table -> Import Data
+Choisis le fichier CSV -> Next
 
 ### 📌 Modélisation :
 ---
@@ -31,7 +44,7 @@ source_position, source_nom_voie, certification_commune, cad_parcelles
 
 J’ai choisi de découper la table en plusieurs entités pour mieux structurer les données et éviter les répétitions. Le fichier d’origine contenait à la fois des informations sur la commune, la voie, l’adresse et les coordonnées. J’ai donc isolé chaque groupe logique : COMMUNE pour les données administratives, VOIE pour les rues et lieux-dits, ADRESSE comme entité pivot reliant commune, voie et coordonnées, COORDONNÉES pour la géolocalisation, et PARCELLES avec une table d’association ADRESSE_PARCELLE pour représenter la relation many-to-many entre adresses et parcelles. 
 
-Découpage retenu :
+# Découpage retenu :
 
 COMMUNE — centralise les informations administratives relatives à la commune.
 VOIE — contient les informations propres à la rue / lieu-dit (id_fantoir, nom_voie, nom_afnor...).
@@ -39,9 +52,49 @@ ADRESSE — entité pivot qui référence numéro, rép (complément), et relie 
 COORDONNÉES — table dédiée aux coordonnées (lon, lat, x, y) liées en 1:1 à une adresse.
 PARCELLES + ADRESSE_PARCELLE — table parcelles et table d'association pour gérer la relation n:n.
 
-Par la suite, j'ai dû rajouter les colonnes date_creation et date_modification dans la table adresse pour faire des ajouts/modif
-de date via trigger.
+# COMMUNE
+code_insee
+nom_commune
+code_postal
+libelle_acheminement
+certification_commune
+code_insee_ancienne_commune
+nom_ancienne_commune
 
+# VOIE
+id_fantoir
+nom_voie
+nom_afnor
+alias
+source_nom_voie
+type_position
+nom_ld
+code_insee
+
+# ADRESSE
+id
+numero
+rep
+id_fantoir
+source_position
+date_creation
+date_modification
+
+# COORDONNÉES
+id_adresse
+lon
+lat
+x
+y
+
+# PARCELLES
+id_parcelle
+
+# ADRESSE_PARCELLE
+id_adresse
+id_parcelle
+
+Ensuite, faire une requête de creation des tables (CREATE TABLE) et insertion des données (INSERT INTO)
 
 ### 📌 Exemples de requêtes :
 ---
