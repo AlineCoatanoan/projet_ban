@@ -52,46 +52,46 @@ COORDONNÉES — table dédiée aux coordonnées (lon, lat, x, y) liées en 1:1 
 PARCELLES + ADRESSE_PARCELLE — table parcelles et table d'association pour gérer la relation n:n.
 
 **COMMUNE**
-code_insee
-nom_commune
-code_postal
-libelle_acheminement
-certification_commune
-code_insee_ancienne_commune
-nom_ancienne_commune
+- code_insee
+- nom_commune
+- code_postal
+- libelle_acheminement
+- certification_commune
+- code_insee_ancienne_commune
+- nom_ancienne_commune
 
 **VOIE**
-id_fantoir
-nom_voie
-nom_afnor
-alias
-source_nom_voie
-type_position
-nom_ld
-code_insee
+- id_fantoir
+- nom_voie
+- nom_afnor
+- alias
+- source_nom_voie
+- type_position
+- nom_ld
+- code_insee
 
 **ADRESSE**
-id
-numero
-rep
-id_fantoir
-source_position
-date_creation
-date_modification
+- id
+- numero
+- rep
+- id_fantoir
+- source_position
+- date_creation
+- date_modification
 
 **COORDONNÉES**
-id_adresse
-lon
-lat
-x
-y
+- id_adresse
+- lon
+- lat
+- x
+- y
 
 **PARCELLES**
-id_parcelle
+- id_parcelle
 
 **ADRESSE_PARCELLE**
-id_adresse
-id_parcelle
+- id_adresse
+- id_parcelle
 
 Ensuite, faire une requête de creation des tables (CREATE TABLE) et insertion des données (INSERT INTO)
 
