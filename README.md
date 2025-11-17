@@ -2,18 +2,13 @@ Base Adresses Nationales
 
 Optimisation et modélisation de données réelles
 
-----------------------------------------------------------------------------------------------------------------------------------
 
 ###### **Objectif :**
-
-
 À partir d’une source de données officielle volumineuse (Base Adresse Nationale), concevoir, structurer et optimiser une base de données relationnelle cohérente et performante.
 
-----------------------------------------------------------------------------------------------------------------------------------
+
 
 ###### 📌 Installation / Prérequis :
-
-
 PostgreSQL installé (version 17)
 
 DBeaver pour accéder à la base
@@ -22,11 +17,8 @@ Fichier CSV départemental (adresses-30.csv)
 
 Docker
 
-----------------------------------------------------------------------------------------------------------------------------------
 
 ###### 📌 Modélisation :
-
-
 Le fichier CSV initial dont j'ai appelé la table "data_ban" contient les attributs suivant :
 
 id, id_fantoir, numero, rep, nom_voie, code_postal, code_insee, nom_commune,
@@ -47,11 +39,8 @@ PARCELLES + ADRESSE_PARCELLE — table parcelles et table d'association pour gé
 Par la suite, j'ai dû rajouter les colonnes date_creation et date_modification dans la table adresse pour faire des ajouts/modif
 de date via trigger.
 
-----------------------------------------------------------------------------------------------------------------------------------
 
 ###### 📌 Exemples de requêtes :
-
-
 📝 Lister toutes les adresses d’une commune donnée, triées par voie :
 
 SELECT a.numero,
@@ -96,10 +85,8 @@ GROUP BY c.code_postal, c.nom_commune
 HAVING COUNT(*) > 10000
 ORDER BY nb_adresses DESC;
 
-----------------------------------------------------------------------------------------------------------------------------------
 
 ###### 📌 Observations de performance :
-
 Avant la création des index, certaines requêtes sur les tables commune, voie et adresse nécessitaient un scan complet de la table, ce qui était plus lent.
 
 Après création des index sur les champs les plus sollicités :
