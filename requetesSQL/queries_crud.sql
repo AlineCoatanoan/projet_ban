@@ -19,7 +19,7 @@ VALUES (currval('adresse_id_seq'), 4.350, 43.850, 654321, 123456);
 -- VALUES sont les valeurs ajoutées en fonction des colonnes.
 -- ON CONFLICT ... DO NOTHING, signifie que si un enregistrement avec ce code_insee existe déjà, alors il ne se passe rien
 -- dans l'insertion des données dans la table adresse, on créer un ID d'où RETURNING id,
--- toutes les valeurs ici sont fictives.
+-- toutes les valeurs pour cette requêtes sont inventées.
 
 -------------------------------------------------------------------------------------------------------------------------------
 

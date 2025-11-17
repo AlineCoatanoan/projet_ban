@@ -1,7 +1,7 @@
 
 -- Nombre moyen d’adresses par commune et par voie.
 
--- A voir : Pour l'instant c'est un peu compliqué
+-- A voir. Je bloque dessus
 
 -----------------------------------------------------------------------------------------------------
 
