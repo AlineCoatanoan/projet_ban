@@ -46,8 +46,7 @@
 
 ---
 ## Règles générales 
-- **RG27 :** Chaque identifiant d’adresse (id) doit rester stable si le lieu existe toujours.  
-- **RG28 :** Chaque nouvelle adresse doit recevoir un nouvel identifiant unique.  
-- **RG29 :** Chaque identifiant d’un objet détruit ne doit pas être réutilisé pour un autre objet.  
-- **RG30 :** Chaque code INSEE et chaque id_fantoir doivent respecter les formats officiels fournis par la BAN.  
-- **RG31 :** Chaque code postal doit correspondre à la commune de l’adresse.  
+- **RG27 :** Chaque identifiant d’adresse doit rester stable si le lieu existe toujours.  
+- **RG28 :** Chaque nouvelle adresse doit recevoir un nouvel identifiant unique.   
+- **RG29 :** Chaque code INSEE et chaque id_fantoir doivent respecter les formats officiels fournis par la BAN.  
+- **RG30 :** Chaque code postal doit correspondre à la commune de l’adresse.  
