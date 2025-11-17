@@ -84,19 +84,19 @@ ALTER TABLE adresse
 ADD COLUMN date_creation TIMESTAMP DEFAULT now(),
 ADD COLUMN date_modification TIMESTAMP DEFAULT now();
 
--- j'ai ajouté des colonnes dans la table adresse pour gérer les dates (rajouté au MCD/MLD/MPD)
+-- j'ai rajouté des colonnes dans la table adresse pour gérer les dates (rajouté au MCD/MLD/MPD) ce que je n'avais pas fais au départ
 
-CREATE OR REPLACE FUNCTION maj_date_modification()
-RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION maj_date_modification() --nom de la fonction
+RETURNS TRIGGER AS $$ --début de la fonction
 BEGIN
     NEW.date_modification := now();
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql; --fin de la fonction
 
-CREATE TRIGGER trig_date_modification
-BEFORE UPDATE ON adresse
-FOR EACH ROW
-EXECUTE FUNCTION maj_date_modification();
+CREATE TRIGGER trig_date_modification --nom du trigger
+BEFORE UPDATE ON adresse --le trigger se déclenche
+FOR EACH ROW --le trigger s'exécute pour chaque ligne modifiée
+EXECUTE FUNCTION maj_date_modification(); --exécute la fonction maj_date_modification
 
 
