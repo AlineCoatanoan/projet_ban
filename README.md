@@ -41,15 +41,16 @@ code_insee_ancienne_commune, nom_ancienne_commune, x, y, lon, lat,
 type_position, alias, nom_ld, libelle_acheminement, nom_afnor,
 source_position, source_nom_voie, certification_commune, cad_parcelles
 
-J’ai choisi de découper la table en plusieurs entités pour mieux structurer les données et éviter les répétitions. Le fichier d’origine contenait à la fois des informations sur la commune, la voie, l’adresse et les coordonnées. J’ai donc isolé chaque groupe logique : COMMUNE pour les données administratives, VOIE pour les rues et lieux-dits, ADRESSE comme entité pivot reliant commune, voie et coordonnées, COORDONNÉES pour la géolocalisation, et PARCELLES avec une table d’association ADRESSE_PARCELLE pour représenter la relation many-to-many entre adresses et parcelles. 
+J’ai choisi de découper la table en plusieurs entités pour mieux structurer les données et éviter les répétitions. Le fichier d’origine contenait à la fois des informations sur la commune, la voie, l’adresse et les coordonnées. J’ai donc isolé chaque groupe logique. Puis "parcelles" est une entité à part, relié à adresse. Car plusieurs adresses peuvent appartenir à une même parcelle (ex. un immeuble), et une parcelle peut contenir plusieurs adresses.
 
 #### Découpage retenu :
 
-- COMMUNE -> centralise les informations administratives relatives à la commune.
-- VOIE -> contient les informations propres à la rue / lieu-dit (id_fantoir, nom_voie, nom_afnor...).
-- ADRESSE -> entité pivot qui référence numéro, rép (complément), et relie voie + commune.
-- COORDONNÉES -> table dédiée aux coordonnées (lon, lat, x, y) liées en 1:1 à une adresse.
-- PARCELLES + ADRESSE_PARCELLE -> table parcelles et table d'association pour gérer la relation n:n.
+- COMMUNE -> centralise les informations relatives à la commune.
+- VOIE -> contient les informations propres à la rue.
+- ADRESSE -> entité centrale liée aux autres tables, et liée à la voie via id_fantoir. Comme la voie connaît sa commune via code_insee, l’adresse accède à la commune en passant par la voie.
+- COORDONNÉES -> table dédiée aux coordonnées d'une adresse.
+- PARCELLES -> contient les identifiants des parcelles cadastrales.
+- ADRESSE_PARCELLE -> table d'association pour gérer la relation n:n entre adresse et parcelles
 
 **COMMUNE**
 - code_insee
@@ -151,14 +152,14 @@ Avant la création des index, certaines requêtes sur les tables commune, voie e
 
 Après création des index sur les champs les plus sollicités :
 
-commune(code_postal)
-adresse(id_fantoir)
-voie(code_insee)
+- commune(code_postal)
+- adresse(id_fantoir)
+- voie(code_insee)
 
 PostgreSQL peut accéder directement aux lignes pertinentes sans parcourir toute la table.
 
 Exemple concret :
 
-Requête pour lister toutes les adresses d’un code postal : Execution Time passé de 0,087 ms → 0,062 ms.
+Requête pour lister toutes les adresses d’un code postal : Execution Time passé de 0,087 ms -> 0,062 ms.
 
 Les index permettent un gain de rapidité significatif sur les requêtes fréquentes, en particulier lorsqu’on travaille avec des tables volumineuses comme celles issues de la BAN.
