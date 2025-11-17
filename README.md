@@ -45,11 +45,11 @@ J’ai choisi de découper la table en plusieurs entités pour mieux structurer 
 
 #### Découpage retenu :
 
-COMMUNE — centralise les informations administratives relatives à la commune.
-VOIE — contient les informations propres à la rue / lieu-dit (id_fantoir, nom_voie, nom_afnor...).
-ADRESSE — entité pivot qui référence numéro, rép (complément), et relie voie + commune.
-COORDONNÉES — table dédiée aux coordonnées (lon, lat, x, y) liées en 1:1 à une adresse.
-PARCELLES + ADRESSE_PARCELLE — table parcelles et table d'association pour gérer la relation n:n.
+- COMMUNE -> centralise les informations administratives relatives à la commune.
+- VOIE -> contient les informations propres à la rue / lieu-dit (id_fantoir, nom_voie, nom_afnor...).
+- ADRESSE -> entité pivot qui référence numéro, rép (complément), et relie voie + commune.
+- COORDONNÉES -> table dédiée aux coordonnées (lon, lat, x, y) liées en 1:1 à une adresse.
+- PARCELLES + ADRESSE_PARCELLE -> table parcelles et table d'association pour gérer la relation n:n.
 
 **COMMUNE**
 - code_insee
