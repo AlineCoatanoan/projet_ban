@@ -47,6 +47,7 @@ de date via trigger.
 ---
 📝 Lister toutes les adresses d’une commune donnée, triées par voie :
 
+```sql
 SELECT a.numero,
        a.rep,
        v.nom_voie,
@@ -57,10 +58,11 @@ JOIN voie v ON a.id_fantoir = v.id_fantoir
 JOIN commune c ON v.code_insee = c.code_insee
 WHERE c.nom_commune ILIKE 'brignon'
 ORDER BY v.nom_voie, a.numero;
-
+```
 
 📝 Ajouter une nouvelle adresse complète :
 
+```sql
 INSERT INTO commune (code_insee, nom_commune, code_postal, libelle_acheminement)
 VALUES ('39999', 'Kaamelott', '39999', 'Kaamelott')
 ON CONFLICT (code_insee) DO NOTHING;
@@ -75,10 +77,11 @@ RETURNING id;
 
 INSERT INTO coordonnee (id_adresse, lon, lat, x, y)
 VALUES (currval('adresse_id_seq'), 4.350, 43.850, 654321, 123456);
-
+```
 
 📝 Lister les codes postaux avec plus de 10 000 adresses :
 
+```sql
 SELECT c.code_postal,
        c.nom_commune,
        COUNT(*) AS nb_adresses
@@ -88,7 +91,7 @@ JOIN commune c ON v.code_insee = c.code_insee
 GROUP BY c.code_postal, c.nom_commune
 HAVING COUNT(*) > 10000
 ORDER BY nb_adresses DESC;
-
+```
 
 ### 📌 Observations de performance :
 ---
