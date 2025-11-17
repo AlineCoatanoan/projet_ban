@@ -1,11 +1,11 @@
 services:
-  db:
-    image: postgres
+  db_ban:
+    image: postgres:17
     environment:
-      POSTGRES_PASSWORD: mot_de_passe_perso_postgres
+      POSTGRES_DB: db_ban         
+      POSTGRES_USER: ban     
+      POSTGRES_PASSWORD: ban123
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
-
-# les tables ont été créées directement dans postgres. Je n'ai pas créé de bdd pour le projet BAN. 
+      - pgdata:
