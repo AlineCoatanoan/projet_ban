@@ -45,56 +45,21 @@ J’ai choisi de découper la table en plusieurs entités pour mieux structurer 
 
 #### Découpage retenu :
 
-- COMMUNE -> centralise les informations relatives à la commune.
-- VOIE -> contient les informations propres à la rue.
-- ADRESSE -> entité centrale liée aux autres tables, et liée à la voie via id_fantoir. Comme la voie connaît sa commune via code_insee, l’adresse accède à la commune en passant par la voie.
-- COORDONNÉES -> table dédiée aux coordonnées d'une adresse.
-- PARCELLES -> contient les identifiants des parcelles cadastrales.
-- ADRESSE_PARCELLE -> table d'association pour gérer la relation n:n entre adresse et parcelles
+**Entités**
+- COMMUNE -> centralise les informations relatives à la commune. ( attributs : code_insee, nom_commune, code_postal, libelle_acheminement, certification_commune, code_insee_ancienne_commune, nom_ancienne_commune)
 
-**COMMUNE**
-- code_insee
-- nom_commune
-- code_postal
-- libelle_acheminement
-- certification_commune
-- code_insee_ancienne_commune
-- nom_ancienne_commune
+- VOIE -> contient les informations propres à la rue. (attributs : id_fantoir, nom_voie, nom_afnor, alias, source_nom_voie, type_position, nom_ld,code_insee)
 
-**VOIE**
-- id_fantoir
-- nom_voie
-- nom_afnor
-- alias
-- source_nom_voie
-- type_position
-- nom_ld
-- code_insee
+- ADRESSE -> entité centrale liée aux autres tables, et liée à la voie via id_fantoir. Comme la voie connaît sa commune via code_insee, l’adresse accède à la commune en passant par la voie. (attributs : id, numero, rep, id_fantoir, source_position, date_creation, date_modification)
 
-**ADRESSE**
-- id
-- numero
-- rep
-- id_fantoir
-- source_position
-- date_creation
-- date_modification
+- COORDONNÉES -> table dédiée aux coordonnées d'une adresse.(attributs : id_adresse,lon,lat,x,y)
 
-**COORDONNÉES**
-- id_adresse
-- lon
-- lat
-- x
-- y
+- PARCELLES -> contient les identifiants des parcelles cadastrales. (attribut: id_parcelle)
 
-**PARCELLES**
-- id_parcelle
+- ADRESSE_PARCELLE -> table d'association pour gérer la relation n:n entre adresse et parcelles (attributs : id_adresse, id_parcelle)
 
-**ADRESSE_PARCELLE**
-- id_adresse
-- id_parcelle
 
-Ensuite, faire une requête de creation des tables [SCRIPT création de tables](/create_table.sql) et insertion des données (INSERT INTO)
+Ensuite, faire une requête de creation des tables [SCRIPT création de tables](/create_table.sql) et insertion des données [SCRIPT insertion des données](/insert_into.sql)
 
 ### 📌 Exemples de requêtes :
 ---
@@ -148,9 +113,9 @@ ORDER BY nb_adresses DESC;
 
 ### 📌 Observations de performance :
 ---
-Avant la création des index, certaines requêtes sur les tables commune, voie et adresse nécessitaient un scan complet de la table, ce qui était plus lent.
+Avant la création des index, certaines requêtes sur les tables commune, voie et adresse nécessitent un scan complet de la table, ce qui est plus lent.
 
-Après création des index sur les champs les plus sollicités :
+Création des index sur les champs les plus sollicités :
 
 - commune(code_postal)
 - adresse(id_fantoir)
@@ -163,3 +128,21 @@ Exemple concret :
 Requête pour lister toutes les adresses d’un code postal : Execution Time passé de 0,087 ms -> 0,062 ms.
 
 Les index permettent un gain de rapidité significatif sur les requêtes fréquentes, en particulier lorsqu’on travaille avec des tables volumineuses comme celles issues de la BAN.
+
+### 📌 Docker-compose :
+
+Création du fichier [docker-compose](/docker-compose.yml)
+Ce fichier permet de décrire toute l’architecture du projet en un seul endroit : quels conteneurs lancer, quels ports ouvrir, quelles variables d’environnement utiliser.
+
+Docker-compose récupère toutes les infos définies dans ce fichier.
+
+À l’intérieur, on définit :
+
+- L’image ou le Dockerfile à utiliser pour chaque service : Postgres, version 17
+- Les ports exposés : 5432
+- Les variables d’environnement : 
+ -> POSTGRES_DB : nom de la base
+ -> POSTGRES_USER : utilisateur
+ -> POSTGRES_PASSWORD : mot de passe
+- Les volumes : sauvegarde les données en dehors du conteneur, la base reste intacte même si le container est supprimé.
+
