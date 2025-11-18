@@ -110,6 +110,7 @@ GROUP BY c.code_postal, c.nom_commune
 HAVING COUNT(*) > 10000
 ORDER BY nb_adresses DESC;
 ```
+Pour chaque requêtes effectuées dans le projet, j'ai mis des commentaires explicatifs. Afin de bien comprendre le cheminement de la requête et chaque commande utilisée comme SELECT, JOIN, INSERT INTO... Je me suis aidée principalement du site [SQL](https://sql.sh/cours/) et de l'IA. 
 
 ### 📌 Observations de performance :
 ---
